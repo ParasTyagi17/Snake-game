@@ -3,6 +3,7 @@
 #include <stdlib.h>
 int width=70,height=30,flag=0;
 int x,y,fruitx,fruity,score,gameover;
+int tailx[100],taily[100],counttail=0;
 //this function draws the border snake and fruit
 void draw()
 {   system("cls");
@@ -17,7 +18,18 @@ void draw()
              else if(i==fruitx&&j==fruity)
              printf("-");//fruit
              else
-               printf(" ");
+             {  int ch=0;
+                for(int k=0;k<counttail;k++)
+                {
+                  if(i==tailx[k] && j==taily[k])
+                  {
+                     printf("*");
+                     ch=1;
+                  }
+                }
+                 if(ch==0)
+                 printf(" ");
+             }
           }
 
     }
@@ -70,8 +82,23 @@ void check()
 }
 //this function moves the snake and fruits
 void logic()
-{
-           switch(flag)
+{  int i;
+   int prevx=tailx[0];
+   int prevy=taily[0];
+   int prev2x,prev2y;
+   tailx[0]=x;
+   taily[0]=y;
+   for(int i=1;i<counttail;i++)
+   {
+    prev2x=tailx[i];
+    prev2y=taily[i];
+    tailx[i]=prevx;
+    taily[i]=prevy;
+    prevx=prev2x;
+    prevy=prev2y;
+   }
+
+          switch(flag)
            {case 1:
              x--;
              break;
@@ -87,9 +114,14 @@ void logic()
              default:
             break;
            }
-           if(x<0||x>height||y>width||y<0)
+           if(x<0||x>height-1||y>width-1||y<0)
                gameover=1;
-           if(x==fruitx&&y==fruity)
+               for(i=0;i<counttail;i++)
+               {
+                 if(x==tailx[i] && y==taily[i])
+                     gameover=1;
+               }
+           if(x==fruitx && y==fruity)
            {
                label1:
             fruitx=rand()%30;//generates random value inside boundaries for fruit to appear
@@ -101,6 +133,7 @@ void logic()
             if(fruitx==0)
            goto label2;
              score+=10;
+             counttail++;
            }
 
 }
@@ -114,7 +147,7 @@ int main()
       draw();
       check();
       logic();
-      for(int m=0;m<10000;m++)
+      for(int m=0;m<10000;m++)// these methods are to slow down the execution
       for(int n=0;n<10000;n++)
       {
       }
